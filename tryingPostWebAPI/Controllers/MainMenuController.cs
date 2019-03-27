@@ -584,6 +584,84 @@ namespace tryingPostWebAPI.Controllers
             return results;
         }
 
+        [HttpGet]
+        public List<results3> GetRestaurantsAccordingToDish([FromUri]string lon, [FromUri] string lat, [FromUri] string dish)
+        {
+            string dishType = dish;
+
+            int d = (int)DateTime.Now.DayOfWeek;
+
+            if (d == 1)
+            {
+                day = "OpenTimesMonday";
+                closeTime = "CloseTimesMonday";
+            }
+
+            else if (d == 2)
+            {
+                day = "OpenTimesTuesday";
+                closeTime = "CloseTimesTuesday";
+            }
+            else if (d == 3)
+            {
+                day = "OpenTimesWednesday";
+                closeTime = "CloseTimesWednesday";
+            }
+            else if (d == 4)
+            {
+                day = "OpenTimesThursday";
+                closeTime = "CloseTimesThursday";
+
+            }
+            else if (d == 5)
+            {
+                day = "OpenTimesFriday";
+                closeTime = "CloseTimesFriday";
+            }
+            else if (d == 6)
+            {
+                day = "OpenTimesSaturday";
+                closeTime = "CloseTimesSaturday";
+            }
+            else if (d == 0)
+            {
+                day = "OpenTimesSunday";
+                closeTime = "CloseTimesSunday";
+            }
+
+            MySqlConnection conn = WebApiConfig.conn();
+            MySqlCommand query = conn.CreateCommand();
+
+
+            query.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance LIMIT 0 , 20";
+            query.Parameters.AddWithValue("@lat", lat);
+            query.Parameters.AddWithValue("@lon", lon);
+
+            var results = new List<results3>();
+
+            try
+            {
+                conn.Open();
+            }
+            catch (MySql.Data.MySqlClient.MySqlException ex)
+            {
+                results.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, ex.ToString()));
+            }
+
+            //provides a means of reading a forward-only stream of rows from a MySQL database
+            MySqlDataReader fetch_query = query.ExecuteReader();
+
+            while (fetch_query.Read())
+            {
+                //null for error parameter e.g no errors
+
+                results.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
+
+            }
+
+            return results;
+        }
+
         // GET api/<controller>
         /* public IEnumerable<string> Get()
          {
