@@ -1579,7 +1579,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "glutenfree" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
