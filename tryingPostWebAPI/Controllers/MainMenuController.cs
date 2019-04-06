@@ -13,6 +13,7 @@ namespace tryingPostWebAPI.Controllers
 
     public class results3
     {
+        public string ID { get; set; }
         public string MainPhoto1 { get; set; }
         public string RestaurantName { get; set; }
         public string Categories { get; set; }
@@ -25,8 +26,9 @@ namespace tryingPostWebAPI.Controllers
 
         public string error { get; set; }
 
-        public results3(string MainPhoto1, string RestaurantName, string Categories, string Cuisines, string Address, string Opentimes, string CloseTimes, string Rating, string Cost, string error)
+        public results3(string ID, string MainPhoto1, string RestaurantName, string Categories, string Cuisines, string Address, string Opentimes, string CloseTimes, string Rating, string Cost, string error)
         {
+            this.ID = ID;
             this.MainPhoto1 = MainPhoto1;
             this.RestaurantName = RestaurantName;
             this.Categories = Categories;
@@ -101,7 +103,7 @@ namespace tryingPostWebAPI.Controllers
             //Distance in km
             //shows first 20 restaurants withing a 10km radius
             //the longitude and latitude are passed in as parameters from the uri.
-            query.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1," + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance LIMIT 0 , 20;";
+            query.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1," + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance LIMIT 0 , 20;";
             query.Parameters.AddWithValue("@lat", lat);
             query.Parameters.AddWithValue("@lon", lon);
 
@@ -113,7 +115,7 @@ namespace tryingPostWebAPI.Controllers
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)
             {
-                results.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, ex.ToString()));
+                results.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, null, ex.ToString()));
             }
 
             //provides a means of reading a forward-only stream of rows from a MySQL database
@@ -123,7 +125,7 @@ namespace tryingPostWebAPI.Controllers
             {
                 //null for error parameter e.g no errors
 
-                results.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
+                results.Add(new results3(fetch_query["ID"].ToString(), fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
 
             }
 
@@ -243,242 +245,242 @@ namespace tryingPostWebAPI.Controllers
 
             if ((sort == "Distance" || sort == "distance") && dietary == "none" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "none" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "none" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Low" || sort == "low") && dietary == "none" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "High" || sort == "high") && dietary == "none" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Distance" || sort == "distance") && dietary == "none" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "none" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "none" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Low" || sort == "low") && dietary == "none" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "High" || sort == "high") && dietary == "none" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Distance" || sort == "distance") && dietary == "vegan" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY distance ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY distance ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "vegan" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "vegan" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Low" || sort == "low") && dietary == "vegan" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "High" || sort == "high") && dietary == "vegan" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Distance" || sort == "distance") && dietary == "vegetarian" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY distance ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY distance ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "vegetarian" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "vegetarian" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Low" || sort == "low") && dietary == "vegetarian" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "High" || sort == "high") && dietary == "vegetarian" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Distance" || sort == "distance") && dietary == "glutenfree" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY distance ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY distance ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "glutenfree" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "glutenfree" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Low" || sort == "low") && dietary == "glutenfree" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "High" || sort == "high") && dietary == "glutenfree" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             //edit open now from here
             else if ((sort == "Distance" || sort == "distance") && dietary == "vegan" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "vegan" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "vegan" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Low" || sort == "low") && dietary == "vegan" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "High" || sort == "high") && dietary == "vegan" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Distance" || sort == "distance") && dietary == "vegetarian" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "vegetarian" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "vegetarian" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Low" || sort == "low") && dietary == "vegetarian" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "High" || sort == "high") && dietary == "vegetarian" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Distance" || sort == "distance") && dietary == "glutenfree" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "glutenfree" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "glutenfree" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "Low" || sort == "low") && dietary == "glutenfree" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
             else if ((sort == "High" || sort == "high") && dietary == "glutenfree" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat)) * cos(radians(Latitude)) * cos(radians(Longitude) - radians(@lon)) + sin(radians(@lat)) * sin(radians(Latitude)))) AS distance FROM restaurants WHERE " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
             }
@@ -489,7 +491,7 @@ namespace tryingPostWebAPI.Controllers
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)
             {
-                refinementList.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, ex.ToString()));
+                refinementList.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, null, ex.ToString()));
 
             }
 
@@ -500,7 +502,7 @@ namespace tryingPostWebAPI.Controllers
             {
                 //null for error parameter e.g no errors
 
-                refinementList.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
+                refinementList.Add(new results3(fetch_query["ID"].ToString(), fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
                 //refinementList.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query["OpenTimesSaturday"].ToString(), fetch_query["CloseTimesSaturday"].ToString(), fetch_query["Rating"].ToString(), null));
 
             }
@@ -558,7 +560,7 @@ namespace tryingPostWebAPI.Controllers
             MySqlCommand query = conn.CreateCommand();
 
 
-            query.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType+ "' AND "+day+" IS NOT NULL HAVING distance < 10 ORDER BY distance LIMIT 0 , 20";
+            query.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType+ "' AND "+day+" IS NOT NULL HAVING distance < 10 ORDER BY distance LIMIT 0 , 20";
             query.Parameters.AddWithValue("@lat", lat);
             query.Parameters.AddWithValue("@lon", lon);
 
@@ -570,7 +572,7 @@ namespace tryingPostWebAPI.Controllers
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)
             {
-                results.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, ex.ToString()));
+                results.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, null, ex.ToString()));
             }
 
             //provides a means of reading a forward-only stream of rows from a MySQL database
@@ -580,7 +582,7 @@ namespace tryingPostWebAPI.Controllers
             {
                 //null for error parameter e.g no errors
 
-                results.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
+                results.Add(new results3(fetch_query["ID"].ToString(), fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
 
             }
 
@@ -636,7 +638,7 @@ namespace tryingPostWebAPI.Controllers
             MySqlCommand query = conn.CreateCommand();
 
 
-            query.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance LIMIT 0 , 20";
+            query.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance LIMIT 0 , 20";
             query.Parameters.AddWithValue("@lat", lat);
             query.Parameters.AddWithValue("@lon", lon);
 
@@ -648,7 +650,7 @@ namespace tryingPostWebAPI.Controllers
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)
             {
-                results.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, ex.ToString()));
+                results.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, null, ex.ToString()));
             }
 
             //provides a means of reading a forward-only stream of rows from a MySQL database
@@ -658,7 +660,7 @@ namespace tryingPostWebAPI.Controllers
             {
                 //null for error parameter e.g no errors
 
-                results.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
+                results.Add(new results3(fetch_query["ID"].ToString(), fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
 
             }
 
@@ -714,7 +716,7 @@ namespace tryingPostWebAPI.Controllers
             MySqlCommand query = conn.CreateCommand();
 
 
-            query.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance LIMIT 0 , 20";
+            query.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance LIMIT 0 , 20";
             query.Parameters.AddWithValue("@lat", lat);
             query.Parameters.AddWithValue("@lon", lon);
 
@@ -726,7 +728,7 @@ namespace tryingPostWebAPI.Controllers
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)
             {
-                results.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, ex.ToString()));
+                results.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, null, ex.ToString()));
             }
 
             //provides a means of reading a forward-only stream of rows from a MySQL database
@@ -736,7 +738,7 @@ namespace tryingPostWebAPI.Controllers
             {
                 //null for error parameter e.g no errors
 
-                results.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
+                results.Add(new results3(fetch_query["ID"].ToString(), fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
 
             }
 
@@ -799,7 +801,7 @@ namespace tryingPostWebAPI.Controllers
 
              if ((sort == "Distance" || sort == "distance") && dietary == "none" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance ASC";
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -807,7 +809,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "none" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Rating DESC";
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -815,7 +817,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "none" && openNow == "no")
              { 
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 HAVING distance < 10 ORDER BY Rating DESC";
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -823,7 +825,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "none" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost ASC;";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost ASC;";
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -831,7 +833,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "none" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost DESC;";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost DESC;";
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -839,7 +841,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Distance" || sort == "distance") && dietary == "none" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -848,7 +850,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "none" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -857,7 +859,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "none" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -866,7 +868,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "none" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -875,7 +877,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "none" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -884,7 +886,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Distance" || sort == "distance") && dietary == "vegan" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -893,7 +895,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "vegan" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -902,7 +904,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "vegan" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -911,7 +913,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "vegan" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -920,7 +922,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "vegan" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -929,7 +931,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Distance" || sort == "distance") && dietary == "vegetarian" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -938,7 +940,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "vegetarian" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -947,7 +949,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "vegetarian" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -956,7 +958,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "vegetarian" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -965,7 +967,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "vegetarian" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -974,7 +976,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Distance" || sort == "distance") && dietary == "glutenfree" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -983,7 +985,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "glutenfree" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -992,7 +994,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "glutenfree" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1001,7 +1003,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "glutenfree" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1010,7 +1012,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "glutenfree" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1020,7 +1022,7 @@ namespace tryingPostWebAPI.Controllers
              //edit open now from here
              else if ((sort == "Distance" || sort == "distance") && dietary == "vegan" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1028,7 +1030,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "vegan" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1037,7 +1039,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "vegan" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1046,7 +1048,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "vegan" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1055,7 +1057,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "vegan" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1064,7 +1066,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Distance" || sort == "distance") && dietary == "vegetarian" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1073,7 +1075,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "vegetarian" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1082,7 +1084,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "vegetarian" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1091,7 +1093,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "vegetarian" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1100,7 +1102,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "vegetarian" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY  Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY  Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1109,7 +1111,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Distance" || sort == "distance") && dietary == "glutenfree" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1118,7 +1120,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "glutenfree" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1127,7 +1129,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "glutenfree" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1136,7 +1138,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "glutenfree" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1145,7 +1147,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "glutenfree" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.categories on foodfinderdb.restaurants.ID = foodfinderdb.categories.RestaurantID WHERE foodfinderdb.categories.CategoryType = '" + categoryType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1159,7 +1161,7 @@ namespace tryingPostWebAPI.Controllers
              }
              catch (MySql.Data.MySqlClient.MySqlException ex)
              {
-                 refinementList.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, ex.ToString()));
+                 refinementList.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, null, ex.ToString()));
 
              }
 
@@ -1170,7 +1172,7 @@ namespace tryingPostWebAPI.Controllers
              {
                  //null for error parameter e.g no errors
 
-                 refinementList.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
+                 refinementList.Add(new results3(fetch_query["ID"].ToString(), fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
                  //refinementList.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query["OpenTimesSaturday"].ToString(), fetch_query["CloseTimesSaturday"].ToString(), fetch_query["Rating"].ToString(), null));
 
              }
@@ -1233,7 +1235,7 @@ namespace tryingPostWebAPI.Controllers
 
              if ((sort == "Distance" || sort == "distance") && dietary == "none" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance ASC";
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -1241,7 +1243,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "none" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Rating DESC";
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -1249,7 +1251,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "none" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 HAVING distance < 10 ORDER BY Rating DESC";
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -1257,7 +1259,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "none" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost ASC;";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost ASC;";
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -1265,7 +1267,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "none" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost DESC;";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost DESC;";
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -1273,7 +1275,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Distance" || sort == "distance") && dietary == "none" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1282,7 +1284,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "none" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1291,7 +1293,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "none" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1300,7 +1302,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "none" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1309,7 +1311,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "none" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1318,7 +1320,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Distance" || sort == "distance") && dietary == "vegan" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1327,7 +1329,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "vegan" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, ddress, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1336,7 +1338,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "vegan" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1345,7 +1347,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "vegan" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1354,7 +1356,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "vegan" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1363,7 +1365,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Distance" || sort == "distance") && dietary == "vegetarian" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1372,7 +1374,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "vegetarian" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1381,7 +1383,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "vegetarian" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1390,7 +1392,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "vegetarian" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1399,7 +1401,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "vegetarian" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1408,7 +1410,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Distance" || sort == "distance") && dietary == "glutenfree" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1417,7 +1419,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "glutenfree" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1426,7 +1428,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "glutenfree" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1435,7 +1437,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "glutenfree" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1444,7 +1446,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "glutenfree" && openNow == "no")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1454,7 +1456,7 @@ namespace tryingPostWebAPI.Controllers
              //edit open now from here
              else if ((sort == "Distance" || sort == "distance") && dietary == "vegan" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1462,7 +1464,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "vegan" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1471,7 +1473,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "vegan" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1480,7 +1482,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "vegan" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1489,7 +1491,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "vegan" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1498,7 +1500,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Distance" || sort == "distance") && dietary == "vegetarian" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1507,7 +1509,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "vegetarian" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1516,7 +1518,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "vegetarian" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1525,7 +1527,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "vegetarian" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1534,7 +1536,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "vegetarian" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY  Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY  Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1543,7 +1545,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Distance" || sort == "distance") && dietary == "glutenfree" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1552,7 +1554,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Rating" || sort == "rating") && dietary == "glutenfree" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1561,7 +1563,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Popular" || sort == "popular") && dietary == "glutenfree" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1570,7 +1572,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "Low" || sort == "low") && dietary == "glutenfree" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1579,7 +1581,7 @@ namespace tryingPostWebAPI.Controllers
              }
              else if ((sort == "High" || sort == "high") && dietary == "glutenfree" && openNow == "yes")
              {
-                 refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
+                 refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.cuisines on foodfinderdb.restaurants.ID = foodfinderdb.cuisines.RestaurantID WHERE foodfinderdb.cuisines.CuisineType = '" + cuisineType + "' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
 
                  refinement.Parameters.AddWithValue("@lat", lat);
                  refinement.Parameters.AddWithValue("@lon", lon);
@@ -1593,7 +1595,7 @@ namespace tryingPostWebAPI.Controllers
              }
              catch (MySql.Data.MySqlClient.MySqlException ex)
              {
-                 refinementList.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, ex.ToString()));
+                 refinementList.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, null, ex.ToString()));
 
              }
 
@@ -1604,7 +1606,7 @@ namespace tryingPostWebAPI.Controllers
              {
                  //null for error parameter e.g no errors
 
-                 refinementList.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
+                 refinementList.Add(new results3(fetch_query["ID"].ToString(), fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
                  //refinementList.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query["OpenTimesSaturday"].ToString(), fetch_query["CloseTimesSaturday"].ToString(), fetch_query["Rating"].ToString(), null));
 
              }
@@ -1667,7 +1669,7 @@ namespace tryingPostWebAPI.Controllers
 
             if ((sort == "Distance" || sort == "distance") && dietary == "none" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY distance ASC";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -1675,7 +1677,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "none" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Rating DESC";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -1683,7 +1685,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "none" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 HAVING distance < 10 ORDER BY Rating DESC";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -1691,7 +1693,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Low" || sort == "low") && dietary == "none" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost ASC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost ASC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -1699,7 +1701,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "High" || sort == "high") && dietary == "none" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost DESC;";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL HAVING distance < 10 ORDER BY Cost DESC;";
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
 
@@ -1707,7 +1709,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Distance" || sort == "distance") && dietary == "none" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1716,7 +1718,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "none" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1725,7 +1727,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "none" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1734,7 +1736,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Low" || sort == "low") && dietary == "none" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1743,7 +1745,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "High" || sort == "high") && dietary == "none" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1752,7 +1754,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Distance" || sort == "distance") && dietary == "vegan" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY distance ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY distance ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1761,7 +1763,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "vegan" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1770,7 +1772,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "vegan" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1779,7 +1781,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Low" || sort == "low") && dietary == "vegan" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1788,7 +1790,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "High" || sort == "high") && dietary == "vegan" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') HAVING distance < 10 ORDER BY Cost DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1797,7 +1799,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Distance" || sort == "distance") && dietary == "vegetarian" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY distance ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY distance ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1806,7 +1808,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "vegetarian" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1815,7 +1817,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "vegetarian" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1824,7 +1826,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Low" || sort == "low") && dietary == "vegetarian" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1833,7 +1835,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "High" || sort == "high") && dietary == "vegetarian" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') HAVING distance < 10 ORDER BY Cost DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1842,7 +1844,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Distance" || sort == "distance") && dietary == "glutenfree" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY distance ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY distance ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1851,7 +1853,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "glutenfree" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1860,7 +1862,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "glutenfree" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1869,7 +1871,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Low" || sort == "low") && dietary == "glutenfree" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1878,7 +1880,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "High" || sort == "high") && dietary == "glutenfree" && openNow == "no")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') HAVING distance < 10 ORDER BY Cost DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1888,7 +1890,7 @@ namespace tryingPostWebAPI.Controllers
             //edit open now from here
             else if ((sort == "Distance" || sort == "distance") && dietary == "vegan" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1896,7 +1898,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "vegan" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1905,7 +1907,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "vegan" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1914,7 +1916,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Low" || sort == "low") && dietary == "vegan" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1923,7 +1925,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "High" || sort == "high") && dietary == "vegan" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegan') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1932,7 +1934,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Distance" || sort == "distance") && dietary == "vegetarian" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1941,7 +1943,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "vegetarian" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1950,7 +1952,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "vegetarian" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1959,7 +1961,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Low" || sort == "low") && dietary == "vegetarian" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1968,7 +1970,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "High" || sort == "high") && dietary == "vegetarian" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY  Cost DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Vegetarian') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY  Cost DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1977,7 +1979,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Distance" || sort == "distance") && dietary == "glutenfree" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY distance ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1986,7 +1988,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Rating" || sort == "rating") && dietary == "glutenfree" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -1995,7 +1997,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Popular" || sort == "popular") && dietary == "glutenfree" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND Rating >= 3 AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Rating DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -2004,7 +2006,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "Low" || sort == "low") && dietary == "glutenfree" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost ASC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -2013,7 +2015,7 @@ namespace tryingPostWebAPI.Controllers
             }
             else if ((sort == "High" || sort == "high") && dietary == "glutenfree" && openNow == "yes")
             {
-                refinement.CommandText = "SELECT Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
+                refinement.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1, " + day + ", " + closeTime + ", Rating, Cost, (6371 * acos(cos(radians(@lat))* cos(radians(Latitude))* cos(radians(Longitude) - radians(@lon))+ sin(radians(@lat))* sin(radians(Latitude)))) AS distance FROM foodfinderdb.restaurants INNER JOIN foodfinderdb.menuitems on foodfinderdb.restaurants.ID = foodfinderdb.menuitems.RestaurantID WHERE foodfinderdb.menuitems.Item LIKE '%" + dishType + "%' AND " + day + " IS NOT NULL AND ID IN (SELECT RestaurantID FROM categories WHERE CategoryType = 'Gluten Free') AND '" + tester + "' BETWEEN " + day + " AND " + closeTime + " HAVING distance < 10 ORDER BY Cost DESC";
 
                 refinement.Parameters.AddWithValue("@lat", lat);
                 refinement.Parameters.AddWithValue("@lon", lon);
@@ -2027,7 +2029,7 @@ namespace tryingPostWebAPI.Controllers
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)
             {
-                refinementList.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, ex.ToString()));
+                refinementList.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, null, ex.ToString()));
 
             }
 
@@ -2038,7 +2040,7 @@ namespace tryingPostWebAPI.Controllers
             {
                 //null for error parameter e.g no errors
 
-                refinementList.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
+                refinementList.Add(new results3(fetch_query["ID"].ToString(), fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
                 //refinementList.Add(new results3(fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query["OpenTimesSaturday"].ToString(), fetch_query["CloseTimesSaturday"].ToString(), fetch_query["Rating"].ToString(), null));
 
             }
