@@ -65,6 +65,35 @@ namespace tryingPostWebAPI.Controllers
 
             return results;
         }
+
+        [HttpPost]
+        //public void Save([FromUri]string userID, [FromUri]string restaurantID)
+        public void SubmitRating([FromBody] Ratings rating)
+        {
+            MySqlConnection conn = WebApiConfig.conn();
+            MySqlCommand query = conn.CreateCommand();
+
+            query.CommandText = "INSERT INTO ratings (UserID, RestaurantID, Rating) VALUES (@userID, @restaurantID, @rating);";
+            query.Parameters.AddWithValue("@userID", rating.userId);
+            query.Parameters.AddWithValue("@restaurantID", rating.restaurantID);
+            query.Parameters.AddWithValue("@rating", rating.rating);
+
+            try
+            {
+                conn.Open();
+                query.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    conn.Close();
+                }
+            }
+        }
         // GET api/<controller>
         public IEnumerable<string> Get()
         {

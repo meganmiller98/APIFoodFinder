@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,6 +58,67 @@ namespace tryingPostWebAPI.Controllers
             }
 
             return results;
+        }
+
+        [HttpDelete]
+        public void deleteSaved([FromUri]string userID, [FromUri]string restaurantID)
+        {
+            
+            
+            MySqlConnection conn = WebApiConfig.conn();
+            MySqlCommand query = conn.CreateCommand();
+
+            query.CommandText = "DELETE FROM favouriterestaurants WHERE userID = @userID AND RestaurantID = @restaurantID";
+            query.Parameters.AddWithValue("@userID", userID);
+            query.Parameters.AddWithValue("@restaurantID", restaurantID);
+
+            try
+            {
+                conn.Open();
+                query.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    conn.Close();
+                }
+            }
+        }
+
+        [HttpPost]
+        //public void Save([FromUri]string userID, [FromUri]string restaurantID)
+        public void Save([FromBody] favedRestaurants fav)
+        {
+            //List<favedRestaurants> save = new List<favedRestaurants>();
+            //save = JsonConvert.DeserializeObject<List<favedRestaurants>>(fav);
+            
+            Console.WriteLine("this is userid " + fav.userID.ToString());
+            MySqlConnection conn = WebApiConfig.conn();
+            MySqlCommand query = conn.CreateCommand();
+
+            query.CommandText = "INSERT INTO favouriterestaurants (RestaurantID, UserID) VALUES (@restaurantID, @userID);";
+            query.Parameters.AddWithValue("@userID", fav.userID);
+            query.Parameters.AddWithValue("@restaurantID", fav.RestaurantID);
+
+            try
+            {
+                conn.Open();
+                query.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    conn.Close();
+                }
+            }
         }
     }
 }

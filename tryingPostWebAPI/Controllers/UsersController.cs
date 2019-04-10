@@ -63,5 +63,35 @@ namespace tryingPostWebAPI.Controllers
 
             return results;
         }
+
+        [HttpPost]
+        //public void Save([FromUri]string userID, [FromUri]string restaurantID)
+        public void addUser([FromBody] Users user)
+        {
+            MySqlConnection conn = WebApiConfig.conn();
+            MySqlCommand query = conn.CreateCommand();
+
+            query.CommandText = "INSERT INTO users (Name, Email, Password) VALUES (@name, @email, @password);";
+            query.Parameters.AddWithValue("@name", user.Name);
+            query.Parameters.AddWithValue("@email", user.Email);
+            query.Parameters.AddWithValue("@password", user.Password);
+
+            try
+            {
+                conn.Open();
+                query.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    conn.Close();
+                }
+            }
+        }
     }
 }
