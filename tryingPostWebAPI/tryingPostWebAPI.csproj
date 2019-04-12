@@ -173,6 +173,7 @@
     <Compile Include="Controllers\PhotosController.cs" />
     <Compile Include="Controllers\RatingsController.cs" />
     <Compile Include="Controllers\RestaurantController.cs" />
+    <Compile Include="Controllers\SavedRestaurantController.cs" />
     <Compile Include="Controllers\testController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />

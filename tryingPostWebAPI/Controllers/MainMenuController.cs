@@ -2047,6 +2047,82 @@ namespace tryingPostWebAPI.Controllers
             return refinementList;
         }
 
+        [HttpGet]
+        public List<results3> getInfoForProfile([FromUri]string ID)
+        {
+            int d = (int)DateTime.Now.DayOfWeek;
+
+            if (d == 1)
+            {
+                day = "OpenTimesMonday";
+                closeTime = "CloseTimesMonday";
+            }
+
+            else if (d == 2)
+            {
+                day = "OpenTimesTuesday";
+                closeTime = "CloseTimesTuesday";
+            }
+            else if (d == 3)
+            {
+                day = "OpenTimesWednesday";
+                closeTime = "CloseTimesWednesday";
+            }
+            else if (d == 4)
+            {
+                day = "OpenTimesThursday";
+                closeTime = "CloseTimesThursday";
+
+            }
+            else if (d == 5)
+            {
+                day = "OpenTimesFriday";
+                closeTime = "CloseTimesFriday";
+            }
+            else if (d == 6)
+            {
+                day = "OpenTimesSaturday";
+                closeTime = "CloseTimesSaturday";
+                day2 = "OpenTimesSaturday";
+            }
+            else if (d == 0)
+            {
+                day = "OpenTimesSunday";
+                closeTime = "CloseTimesSunday";
+            }
+
+            Console.Write(day);
+
+            MySqlConnection conn = WebApiConfig.conn();
+            MySqlCommand query = conn.CreateCommand();
+            
+            //used to send info to restaurantProfileActivity from user profile on click saved restaurant
+            query.CommandText = "SELECT ID, Address, RestaurantName, Cuisine, Category, MainPhoto1," + day + ", " + closeTime + ", Rating, Cost FROM restaurants WHERE ID = @ID";
+            query.Parameters.AddWithValue("@ID", ID);
+            var results = new List<results3>();
+
+            try
+            {
+                conn.Open();
+            }
+            catch (MySql.Data.MySqlClient.MySqlException ex)
+            {
+                results.Add(new Controllers.results3(null, null, null, null, null, null, null, null, null, null, ex.ToString()));
+            }
+
+            //provides a means of reading a forward-only stream of rows from a MySQL database
+            MySqlDataReader fetch_query = query.ExecuteReader();
+
+            while (fetch_query.Read())
+            {
+                //null for error parameter e.g no errors
+
+                results.Add(new results3(fetch_query["ID"].ToString(), fetch_query["MainPhoto1"].ToString(), fetch_query["RestaurantName"].ToString(), fetch_query["Category"].ToString(), fetch_query["Cuisine"].ToString(), fetch_query["Address"].ToString(), fetch_query[day].ToString(), fetch_query[closeTime].ToString(), fetch_query["Rating"].ToString(), fetch_query["Cost"].ToString(), null));
+
+            }
+
+            return results;
+        }
         // GET api/<controller>
         /* public IEnumerable<string> Get()
          {
