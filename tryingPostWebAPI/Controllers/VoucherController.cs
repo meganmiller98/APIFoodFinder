@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -104,6 +105,28 @@ namespace tryingPostWebAPI.Controllers
             }
 
             return results;
+        }
+
+        [HttpDelete]
+        public void deleteExpiredVouchers()
+        {
+            MySqlConnection con = WebApiConfig.conn();
+            string sql = "SET SQL_SAFE_UPDATES = 0; delete from vouchers where ExpiryDate < NOW(); SET SQL_SAFE_UPDATES = 1;";
+            try
+            {
+
+                con.Open();
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+
+                cmd.CommandType = CommandType.Text;
+
+                cmd.ExecuteNonQuery();
+
+            }
+            finally
+            {
+                con.Close();
+            }
         }
     }
 }

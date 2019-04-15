@@ -78,6 +78,7 @@ namespace tryingPostWebAPI.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
             }
             finally
             {
@@ -110,6 +111,7 @@ namespace tryingPostWebAPI.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
             }
             finally
             {

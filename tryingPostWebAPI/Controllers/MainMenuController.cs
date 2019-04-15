@@ -136,8 +136,9 @@ namespace tryingPostWebAPI.Controllers
         //inner join done with the average rating table and the restaurant table to get the average rating of each restaurant displayed in the rating column in restaurants
         //average rating table is cleared after the join
         [HttpPost]
-        public void ratingsTest()
+        public void ratingsTest([FromBody] results3 updateRatings)
         {
+            Console.WriteLine(updateRatings.RestaurantName);
             MySqlConnection con = WebApiConfig.conn();
             string sql = "INSERT INTO averageratings (RestaurantID, AverageRating) SELECT RestaurantID, AVG(Rating) FROM ratings GROUP BY RestaurantID";
             string sql2 = "SET SQL_SAFE_UPDATES = 0; UPDATE restaurants t1 INNER JOIN averageratings t2 ON t1.ID = t2.RestaurantID SET t1.rating = t2.AverageRating; SET SQL_SAFE_UPDATES = 1;";

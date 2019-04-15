@@ -85,6 +85,7 @@ namespace tryingPostWebAPI.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
             }
             finally
             {
